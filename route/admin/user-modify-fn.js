@@ -5,7 +5,12 @@ module.exports = async (req, res, next) => {
     const {password, username, email, role, state} = req.body; // 传过来的所有信息
 
     // 根据 id 查询当前用户的信息
-    const user = await User.findOne({_id: id});
+    try {
+        //查询时可能会出错，需要捕获异常
+        user = await User.findOne({_id:id});    
+    } catch (error) {
+        return next(JSON.stringify({path:"/admin/user-edit",message:error.messagge}))
+    }
     // 判断用户传递过来的密码是否和查询出来的密码一致
     
     if(hash(password) === user.password) {
